@@ -48,9 +48,10 @@ void State::updateState( float deltaT )
   // Generate some new missiles.  The rate of missle generation
   // should increase with time.
   float prob = (currentTime / 60.0) / 10.0; // probablity to increase by 10% every min
-  if (randIn01() < 0.10 + prob) {	// New missile with probability 10%
+  // I feel like this should be higher but i suck playing this game
+  if (randIn01() < 0.05 +  prob) {	
     float vx = randIn01() / 50.0;  
-    float vy = randIn01() / 10.0;
+    float vy = randIn01() / 50.0;
     float dir = randIn01();
     if (dir < 0.25){
 	vx = -vx;
@@ -81,7 +82,7 @@ void State::updateState( float deltaT )
   for (i=0; i<missilesOut.size(); i++)
     if (missilesOut[i].hasReachedDestination()) {
       // CHANGE THIS: ADD AN EXPLOSION
-      explosions.add(Circle(missilesOut[i].position(), 0.01, 0.02, vector(0.0, 1.0, 0.0)));
+      explosions.add(Circle(missilesOut[i].position(), 0.01, 0.04, vector(0.0, 1.0, 0.0)));
       //std::cout << missilesOut[i].position() << std::endl;
       missilesOut.remove(i);
       i--;
@@ -92,12 +93,21 @@ void State::updateState( float deltaT )
   for (i=0; i<explosions.size(); i++)
     if (explosions[i].radius() >= explosions[i].maxRadius()) {
       // CHANGE THIS: CHECK FOR DESTROYED CITY OR SILO
+      //check cities
       for(int j = 0; j < cities.size(); j++){
 	if(cities[j].isHit(explosions[i].getPosition(), explosions[i].radius())){
 	  cities.remove(j);
 	  j--;
         }
       }
+      // check silos
+      for(int j = 0; j < silos.size(); j++){
+        if(silos[j].isHit(explosions[i].getPosition(), explosions[i].radius())){
+          silos.remove(j);
+          j--;
+        }
+      }
+
       explosions.remove(i);
       i--;
     }
@@ -105,7 +115,25 @@ void State::updateState( float deltaT )
   // Look for incoming missiles that hit an explosion and are
   // destroyed
 
-     // ADD CODE HERE
+  // ADD CODE HERE
+  vector missilePos;
+  vector explosionPos;
+  float  explosionRad;
+
+  for(i = 0 ; i < missilesIn.size(); i++){
+     missilePos = missilesIn[i].position();
+     for(int j = 0; j < explosions.size(); j++){
+	explosionPos = explosions[j].getPosition();
+	explosionRad = explosions[j].radius();
+	if(explosionPos.x + explosionRad >= missilePos.x &&
+	   explosionPos.x - explosionRad <= missilePos.x &&
+	   explosionPos.y + explosionRad >= missilePos.y &&
+           explosionPos.y - explosionRad <= missilePos.y){
+	   missilesIn.remove(i);
+	   i--;
+	}
+     }
+  }
 
   // Update all the moving objects
 
@@ -126,7 +154,9 @@ void State::fireMissile( int siloIndex, float x, float y )
 
 {
   const float speed = 0.3;
-    
+  if(siloIndex >= silos.numElements)
+	return;
+
   if (silos[siloIndex].canShoot()) {
 
     silos[siloIndex].decrMissiles();

@@ -34,10 +34,10 @@
 template<class T> class seq {
 
   int storageSize;
-  int numElements;
   T  *data;
 
 public:
+   int numElements;
 
   seq() {			// constructor
     storageSize = 2;
