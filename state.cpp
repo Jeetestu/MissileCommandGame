@@ -111,10 +111,14 @@ void State::fireMissile( int siloIndex, float x, float y )
     silos[siloIndex].decrMissiles();
 
     // CHANGE THIS
-
+    vector pos = silos[siloIndex].position();
+    pos = (2.0 * pos) - vector(1, 1, 0); // normalize x  over [-1,1]
+    // std::cout << pos << std::endl;
+    vector velo = vector(x,y,0) - pos;
+    //std::cout << velo << std::endl;
     missilesOut.add( Missile( silos[siloIndex].position(),   // source
-			      speed * vector(randIn01(),randIn01(),0), // velocity
-			      0,                             // destination y
+			 speed * velo, //vector(randIn01(), randIn01(), 0), // velocity
+			      y,                             // destination y
 			      vector( 0,1,1 ) ) );           // colour
   }
 }

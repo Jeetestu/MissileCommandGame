@@ -57,9 +57,11 @@ void mouseClick( int button, int buttonState, int x, int y )
   if (buttonState == GLUT_DOWN) {
 
     // Calculate the world coordinates of mouse (x,y)
-
-    float wx = x;
-    float wy = y;
+    float deltaX = x - WINDOW_WIDTH / 2;
+    float deltaY = y - WINDOW_HEIGHT / 2;
+    float wx = (2.0 * (float) deltaX) / ((float)  WINDOW_WIDTH);
+    float wy = -(2.0 * (float) deltaY) / ((float)  WINDOW_HEIGHT);
+    // std::cout << "X: " << wx << " Y: " << wy << std::endl;
 
     // Shoot from silo 0, 1, or 2
 

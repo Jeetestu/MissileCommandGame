@@ -47,6 +47,9 @@ class Missile {
   // Has the missile reached its destination?
 
   bool hasReachedDestination() {
+    if(pos1.y <  0.0) // hit the bottom
+   	return true;
+
     return false;
   }
 
