@@ -56,13 +56,17 @@ void mouseClick( int button, int buttonState, int x, int y )
 {
   if (buttonState == GLUT_DOWN) {
 
+#if 0
     // Calculate the world coordinates of mouse (x,y)
     float deltaX = x - WINDOW_WIDTH / 2;
     float deltaY = y - WINDOW_HEIGHT / 2;
     float wx = (2.0 * (float) deltaX) / ((float)  WINDOW_WIDTH);
     float wy = -(2.0 * (float) deltaY) / ((float)  WINDOW_HEIGHT);
     // std::cout << "X: " << wx << " Y: " << wy << std::endl;
-
+#else
+	float wx = x/(float)WINDOW_WIDTH * (WORLD_RIGHT - WORLD_LEFT) + WORLD_LEFT;
+        float wy = (WINDOW_HEIGHT - 1 -y)/(float)WINDOW_HEIGHT * (worldTop - WORLD_BOTTOM) + WORLD_BOTTOM;
+#endif
     // Shoot from silo 0, 1, or 2
 
     switch (button) {
