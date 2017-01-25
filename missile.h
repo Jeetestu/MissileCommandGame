@@ -5,6 +5,7 @@
 #define MISSILE_H
 
 
+#include "headers.h"
 #include "vector.h"
 
 class Missile {
@@ -47,8 +48,12 @@ class Missile {
   // Has the missile reached its destination?
 
   bool hasReachedDestination() {
-    if(pos1.y <  0.0) // hit the bottom
-   	return true;
+    //if (pos1.y <= destY)
+    //    return true;
+    if(pos0.y == 0 && pos1.y >=  destY)
+	return true;
+    if(pos0.y != 0 && pos1.y <= destY)
+	return true;
 
     return false;
   }
