@@ -31,7 +31,23 @@ class City : public Building {
     glEnd();
   }
 
-  bool isHit( vector missilePos, float radius ); 
+  bool isHit( vector missilePos, float radius ){
+      // check if explosions centre lies within city
+      if((pos.x + .04) >= missilePos.x &&
+         (pos.x - .04) <= missilePos.x &&
+	 	   0.03 >= missilePos.y -radius)
+         return true;
+      if((pos.x + .04) >= missilePos.x + radius &&
+         (pos.x - .04) <= missilePos.x + radius &&
+	 	   0.03 >= missilePos.y -radius)
+         return true;
+      if((pos.x + .04) >= missilePos.x - radius &&
+         (pos.x - .04) <= missilePos.x - radius &&
+	 	   0.03 >= missilePos.y -radius)
+         return true;
+
+      return false;
+  } 
 };
   
 

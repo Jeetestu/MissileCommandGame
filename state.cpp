@@ -47,11 +47,23 @@ void State::updateState( float deltaT )
 
   // Generate some new missiles.  The rate of missle generation
   // should increase with time.
-
-  if (randIn01() < 0.10) {	// New missile with probability 10%
+  float prob = (currentTime / 60.0) / 10.0; // probablity to increase by 10% every min
+  if (randIn01() < 0.10 + prob) {	// New missile with probability 10%
+    float vx = randIn01() / 50.0;  
+    float vy = randIn01() / 10.0;
+    float dir = randIn01();
+    if (dir < 0.25){
+	vx = -vx;
+	vy = -vy;
+    }
+    else if(dir >= 0.25 && dir < 0.5){
+	vx = -vx;
+    }
+    else if(dir >= 0.5 && dir < 0.75)
+	vy = -vy;
 
     missilesIn.add( Missile( vector( randIn01(), worldTop, 0), // source
-			     vector( -0.02, -0.1, 0 ),   // velocity
+			     vector(vx, vy, 0 ),   // velocity
 			     0,                      // destination y
 			     vector( 1,1,0 ) ) );    // colour
   }
@@ -61,6 +73,7 @@ void State::updateState( float deltaT )
   for (i=0; i<missilesIn.size(); i++)
     if (missilesIn[i].hasReachedDestination()) {
       // CHANGE THIS: ADD AN EXPLOSION
+      explosions.add(Circle(missilesIn[i].position(), 0.01, 0.02, vector(0.94,0.2,0.2)));
       missilesIn.remove(i);
       i--;
     }
@@ -68,6 +81,8 @@ void State::updateState( float deltaT )
   for (i=0; i<missilesOut.size(); i++)
     if (missilesOut[i].hasReachedDestination()) {
       // CHANGE THIS: ADD AN EXPLOSION
+      explosions.add(Circle(missilesOut[i].position(), 0.01, 0.02, vector(0.0, 1.0, 0.0)));
+      //std::cout << missilesOut[i].position() << std::endl;
       missilesOut.remove(i);
       i--;
     }
@@ -77,6 +92,12 @@ void State::updateState( float deltaT )
   for (i=0; i<explosions.size(); i++)
     if (explosions[i].radius() >= explosions[i].maxRadius()) {
       // CHANGE THIS: CHECK FOR DESTROYED CITY OR SILO
+      for(int j = 0; j < cities.size(); j++){
+	if(cities[j].isHit(explosions[i].getPosition(), explosions[i].radius())){
+	  cities.remove(j);
+	  j--;
+        }
+      }
       explosions.remove(i);
       i--;
     }
